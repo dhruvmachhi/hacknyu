@@ -6,16 +6,8 @@ import { Canvas } from "@react-three/fiber";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-const steps = [
-    "Introduction",
-    "Scan Face",
-    "Measurements",
-    "Design",
-    "Review",
-]
 
 export default function Home() {
-
     return (
         <main>
             <div className="absolute w-full h-full">
