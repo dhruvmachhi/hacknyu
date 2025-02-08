@@ -30,9 +30,9 @@ export default function Home() {
             </div>
             <div className="fixed right-8 bottom-1/2 -translate-y-1/2">
             <Link href={"/scan"}>
-                <Button size={"icon"} className="w-16 h-16 text-5xl p-4 rounded-full">
-                    <ArrowRight size={64}/>
-                </Button>
+                <button className="rounded-full bg-black size-16 flex justify-center items-center">
+                    <ArrowRight color="white" size={32} />
+                </button>
             </Link>
             </div>
             <ProgressBar index={1} steps={steps}/>
