@@ -6,11 +6,11 @@ import ProgressBar from '@/components/ProgressBar';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from 'next/link';
+import { useMeasurementsStore } from '@/store';
 
 const steps = [
   "Introduction",
   "Scan Face",
-  "Measurements",
   "Design",
   "Review",
 ];
@@ -19,6 +19,11 @@ export default function ScanPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const router = useRouter();
   const [scanning, setScanning] = useState(false);
+
+  const { setMeasurements } = useMeasurementsStore();
+  const { resetMeasurements } = useMeasurementsStore();
+  const { measurements } = useMeasurementsStore();
+
   const [error, setError] = useState<string | null>(null);
 
   // Request access to the user's webcam.
@@ -42,6 +47,7 @@ export default function ScanPage() {
 
   const startScan = async () => {
     setScanning(true);
+    resetMeasurements();
     setError(null);
     try {
       if (!videoRef.current) {
@@ -81,10 +87,11 @@ export default function ScanPage() {
       if (data.error) {
         setError(data.error);
       } else {
-        // Automatically navigate to the measurement page with query parameters.
-        router.push(
-          `/measurement?eye_width_mm=${data.eye_width_mm}&bridge_width_mm=${data.bridge_width_mm}&b_size_mm=${data.b_size_mm}`
-        );
+        setMeasurements({
+          eyeWidth: data.eye_width_mm,
+          bridgeWidth: data.bridge_width_mm,
+          sideLength: data.b_size_mm
+        });
       }
     } catch (err: any) {
       setError("An error occurred: " + err.message);
@@ -124,6 +131,15 @@ export default function ScanPage() {
 
       {scanning ? (
         <p className="mb-8">Scanning... please wait.</p>
+      ) : measurements ? (
+        <div className="mb-8 text-center">
+          <h2 className="text-2xl font-semibold mb-4">Measurement Results</h2>
+          <ul>
+            <li>Eye Width: {measurements.eyeWidth} mm</li>
+            <li>Bridge Width: {measurements.eyeWidth} mm</li>
+            <li>B Size (Vertical): {measurements.sideLength} mm</li>
+          </ul>
+        </div>
       ) : error ? (
         <p className="mb-8 text-red-500">{error}</p>
       ) : (
@@ -143,6 +159,11 @@ export default function ScanPage() {
         <Button onClick={startScan} disabled={scanning}>
           {scanning ? "Scanning..." : "Start Scan"}
         </Button>
+        {measurements != null && (
+          <Link href="/design">
+            <Button>Next: Design</Button>
+          </Link>
+        )}
       </div>
       <div className="mt-8">
         {/* For the scan step, we use index 1 (0: Introduction, 1: Scan Face) */}
