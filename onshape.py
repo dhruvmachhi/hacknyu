@@ -6,36 +6,34 @@ import hmac
 import base64
 import json
 
-# === 1. Define Your API Credentials and Document Details ===
-ACCESS_KEY = "jNuY9TEnPr2nwZuqfHLAS6Eh"
-SECRET_KEY = "QVocU6QeUAUJMNwfd8giLDyhpMFSdzl1fW4byGG7CHSRXWEW"
+# --- 1. API Credentials and Resource IDs ---
+ACCESS_KEY = "YOUR_ACCESS_KEY"  # Replace with your actual key
+SECRET_KEY = "YOUR_SECRET_KEY"  # Replace with your actual secret
 document_id = "2d31f5e10fa056c96e0a75c6"
 workspace_id = "8fc670243965225a2baeaa59"
-element_id = "6c046a925cf8e0f222c96fba"  # Ensure this is the correct Part Studio ID
+# Use the element ID from the document URL if that’s the correct Part Studio:
+element_id = "a377fdbdab916b853e7ea51a"  
 
-# === 2. Get User Input and Compute New Parameter Values ===
-try:
-    bridge_input = float(input("Enter Bridge value (mm): "))
-    offset = float(input("Enter offset value (mm) for BridgeWid: "))
-    lens_len_input = float(input("Enter Lens Length (mm): "))
-    lens_wid_input = float(input("Enter Lens Width (mm): "))
-except ValueError:
-    print("Please enter valid numeric values.")
-    exit(1)
+# --- 2. Compute New Parameter Values ---
+bridge_input = 20.03
+offset = 5
+lens_len_input = 2.587
+lens_wid_input = 4.297
 
 BridgeWid = bridge_input + offset
 LensLen = lens_len_input
 LensWid = lens_wid_input
 
-# === 3. Construct API Request for Updating Variables ===
+# --- 3. Construct the API Request ---
 method = "POST"
-path = f"/api/variables/d/{document_id}/w/{workspace_id}/e/{element_id}"  # Use the correct Onshape variable update endpoint
+# If the API endpoint is versioned, you might need to include the version (e.g., /api/v6/...)
+path = f"/api/variables/d/{document_id}/w/{workspace_id}/e/{element_id}"
 query = ""
 
 payload = {
     "variables": [
         {
-            "variableId": "BridgeWid",  
+            "variableId": "BridgeWid",
             "expression": f"{BridgeWid} mm",
             "variableType": "Length"
         },
@@ -51,13 +49,12 @@ payload = {
         }
     ]
 }
+# Use minified JSON to be safe:
+body = json.dumps(payload, separators=(",", ":"))
 
-body = json.dumps(payload)
-
-# === 4. Generate the HMAC Signature for Authentication ===
+# --- 4. Generate the HMAC Signature ---
 timestamp = str(int(time.time() * 1000))
 nonce = str(uuid.uuid4())
-
 message_to_sign = timestamp + nonce + method + path + query + body
 
 signature = base64.b64encode(
@@ -66,7 +63,6 @@ signature = base64.b64encode(
              hashlib.sha256).digest()
 ).decode('utf-8')
 
-# === 5. Set Up Request Headers ===
 headers = {
     "Content-Type": "application/json",
     "On-Nonce": nonce,
@@ -75,12 +71,10 @@ headers = {
     "On-Signature": signature
 }
 
-# === 6. Make the API Request ===
+# --- 5. Make the Request ---
 url = "https://cad.onshape.com" + path
-
 response = requests.post(url, headers=headers, data=body)
 
-# === 7. Check the Response ===
 if response.status_code == 200:
     print("✅ Parameters updated successfully!")
     print("Response:", response.json())
