@@ -11,7 +11,6 @@ const steps = [
     "Introduction",
     "Scan Face",
     "Measurements",
-    "Design",
     "Review",
 ];
 
@@ -42,7 +41,7 @@ export default function MeasurementPage() {
             <div className="max-w-4xl mx-auto px-4 py-12">
                 <h1 className="text-4xl font-bold text-center mb-4 text-gray-800">Your Measurements</h1>
                 <p className="text-center text-gray-600 mb-8">
-                    Review and adjust your measurements before proceeding to frame design
+                    Review and adjust your measurements before proceeding to frame review. 
                 </p>
 
                 <div className="bg-white rounded-2xl p-8 shadow-lg max-w-lg mx-auto">
@@ -145,7 +144,7 @@ export default function MeasurementPage() {
                             Rescan
                         </Button>
                         <Button 
-                            onClick={() => router.push('/design')}
+                            onClick={() => router.push('/review')}
                             className="flex-1 bg-black hover:bg-blue-600 transition-colors py-6 text-lg"
                         >
                             Next Step

@@ -13,7 +13,6 @@ const steps = [
   "Introduction",
   "Scan Face",
   "Measurements",
-  "Design",
   "Review",
 ];
 
@@ -150,7 +149,7 @@ export default function ScanPage() {
       </div>
 
       <div className="mt-28">
-        <ProgressBar index={1} steps={steps} />
+        <ProgressBar index={2} steps={steps} />
       </div>
     </main>
   );

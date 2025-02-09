@@ -8,7 +8,7 @@ import { Object3D } from "three";
 
 export default function GlassesModel() {
     const ref = useRef<Object3D>(null);
-    const obj = useLoader(OBJLoader, '/oculos.obj');
+    const obj = useLoader(OBJLoader, '/model.obj');
     const mouse = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -30,6 +30,6 @@ export default function GlassesModel() {
     });
 
     return (
-        <primitive ref={ref} object={obj} />
+        <primitive ref={ref} object={obj} position={[.045, -.17, 0]} />
     );
 }

@@ -20,7 +20,7 @@ export default function Home() {
     return (
         <main>
             <div className="absolute w-full h-full">
-                <Canvas camera={{ fov: 35, zoom: 1, near: 1, far: 1000 }}>
+                <Canvas camera={{ fov: 35, zoom: 12, near: 1, far: 1000 }}>
                     <ambientLight intensity={0} />
                     <GlassesModel />
                 </Canvas>
