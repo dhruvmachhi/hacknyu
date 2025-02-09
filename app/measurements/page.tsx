@@ -3,7 +3,6 @@ import ProgressBar from "@/components/ProgressBar";
 const steps = [
     "Introduction",
     "Scan Face",
-    "Measurements",
     "Design",
     "Review",
 ]

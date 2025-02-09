@@ -4,11 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import ProgressBar from '@/components/ProgressBar';
 import Link from 'next/link';
+import { useMeasurementsStore } from '@/store';
 
 const steps = [
   "Introduction",
   "Scan Face",
-  "Measurements",
   "Design",
   "Review",
 ];
@@ -16,11 +16,11 @@ const steps = [
 export default function ScanPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [scanning, setScanning] = useState(false);
-  const [measurement, setMeasurement] = useState<{
-    eye_width_mm: number;
-    bridge_width_mm: number;
-    b_size_mm: number;
-  } | null>(null);
+
+  const { setMeasurements } = useMeasurementsStore();
+  const { resetMeasurements } = useMeasurementsStore();
+  const { measurements } = useMeasurementsStore();
+
   const [error, setError] = useState<string | null>(null);
 
   // Request access to the user's webcam.
@@ -41,7 +41,7 @@ export default function ScanPage() {
 
   const startScan = async () => {
     setScanning(true);
-    setMeasurement(null);
+    resetMeasurements();
     setError(null);
     try {
       // Capture a frame from the video stream.
@@ -77,7 +77,11 @@ export default function ScanPage() {
       if (data.error) {
         setError(data.error);
       } else {
-        setMeasurement(data);
+        setMeasurements({
+          eyeWidth: data.eye_width_mm,
+          bridgeWidth: data.bridge_width_mm,
+          sideLength: data.b_size_mm
+        });
       }
     } catch (err: any) {
       setError("An error occurred: " + err.message);
@@ -118,13 +122,13 @@ export default function ScanPage() {
 
       {scanning ? (
         <p className="mb-8">Scanning... please wait.</p>
-      ) : measurement ? (
+      ) : measurements ? (
         <div className="mb-8 text-center">
           <h2 className="text-2xl font-semibold mb-4">Measurement Results</h2>
           <ul>
-            <li>Eye Width: {measurement.eye_width_mm} mm</li>
-            <li>Bridge Width: {measurement.bridge_width_mm} mm</li>
-            <li>B Size (Vertical): {measurement.b_size_mm} mm</li>
+            <li>Eye Width: {measurements.eyeWidth} mm</li>
+            <li>Bridge Width: {measurements.eyeWidth} mm</li>
+            <li>B Size (Vertical): {measurements.sideLength} mm</li>
           </ul>
         </div>
       ) : error ? (
@@ -137,7 +141,7 @@ export default function ScanPage() {
         <Button onClick={startScan} disabled={scanning}>
           {scanning ? "Scanning..." : "Start Scan"}
         </Button>
-        {measurement && (
+        {measurements != null && (
           <Link href="/design">
             <Button>Next: Design</Button>
           </Link>

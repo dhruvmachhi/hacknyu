@@ -9,7 +9,6 @@ import Link from "next/link";
 const steps = [
     "Introduction",
     "Scan Face",
-    "Measurements",
     "Design",
     "Review",
 ]
